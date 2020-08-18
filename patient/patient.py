@@ -18,4 +18,3 @@ class patient():
         self.age    = age
         self.smoker = smoker
         self.sex    = sex
-        
