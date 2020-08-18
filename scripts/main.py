@@ -13,6 +13,9 @@ if __name__ == '__main__':
 
     X = pd.read_csv("../data/train.csv")
     ids = set(X.Patient)
+    T = max(X['Weeks'].to_numpy())  # time window end
+    T_min = min(X['Weeks'].to_numpy()) # time window start
+
 
     patients=[]
     for id in ids:
@@ -21,9 +24,9 @@ if __name__ == '__main__':
         patients.append(p)
 
     #params of ctmc
-    T = 21 #time window end
-    dt = 0.0005 # timestep for simulation
-    D = 2 # number of states of ctmc
+
+    dt = 0.005 # timestep for simulation
+    D = 100 # number of states of ctmc
     alpha = 0.1 #prior over num of transitions
     beta  = 0.1 # prior dwelling time
 
@@ -33,11 +36,10 @@ if __name__ == '__main__':
         Q[i,i] = 0
         Q[i, i] = -sum(Q[i, :])
     #generate random initial state
-    p0 = np.ones((1,D)).flatten()
-    p0[0] = 0
-    p0 = p0/sum(p0)
+    p0 = np.ones((1,D)).flatten()/D
+    print(sum(p0))
     #prior assumption on observation model
-    mu = np.random.uniform(low= -2,high = 2,size =(D,1))
+    mu = np.arange(0,D,100)
     sig= np.ones((D))*0.2
     params = (mu,sig)
 
