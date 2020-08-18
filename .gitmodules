@@ -1,0 +1,3 @@
+[submodule "AutoCTMC"]
+	path = AutoCTMC
+	url = https://github.com/dlinzner-bcs/AutoCTMC.git
