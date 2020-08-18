@@ -4,3 +4,5 @@ data/
 AutoCTMC
 
 venv
+
+.idea/
