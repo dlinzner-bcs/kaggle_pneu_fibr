@@ -1,4 +1,5 @@
 from AutoCTMC.ctmc.ctmc import ctmc
+from patient.patient import patient
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
@@ -10,7 +11,14 @@ if __name__ == '__main__':
 
     #import data
 
+    X = pd.read_csv("../data/train.csv")
+    ids = set(X.Patient)
 
+    patients=[]
+    for id in ids:
+        p = patient(id)
+        p.load_patient(X)
+        patients.append(p)
 
     #params of ctmc
     T = 21 #time window end

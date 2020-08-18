@@ -1,3 +1,5 @@
+import pandas as pd
+
 class patient():
     """
     patient class.
@@ -11,10 +13,25 @@ class patient():
     sex     = sex female/male
     traj_p  = percentage observation trajectories
     """
-    def __init__(self,id,age,smoker,sex,traj_p):
+    def __init__(self,id):
         super().__init__()
 
         self.id     =  id
-        self.age    = age
-        self.smoker = smoker
-        self.sex    = sex
+
+    def load_traj(self, subframe):
+        times    = subframe['Weeks'].to_numpy()
+        obs      = subframe['Percent'].to_numpy()
+        traj =  (times[:],obs[:])
+        self. traj_p = traj
+        return None
+
+    def load_patient(self,dataframe):
+        subframe = dataframe[dataframe['Patient'] == self.id]
+
+        self.load_traj(subframe)
+        self.age = set(subframe['Age'])
+        self.sex = set(subframe['Sex'])
+        self.smoker = set(subframe['SmokingStatus'])
+        return None
+
+
