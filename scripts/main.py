@@ -5,17 +5,17 @@ import pandas as pd
 from scipy.stats import norm
 import copy
 import matplotlib.pyplot as plt
-
+import random
 
 if __name__ == '__main__':
 
     #import data
 
     X = pd.read_csv("../data/train.csv")
-    ids = set(X.Patient)
-    T = max(X['Weeks'].to_numpy())  # time window end
+    ids = list(set(X.Patient))
+    T_max = max(X['Weeks'].to_numpy())  # time window end
     T_min = min(X['Weeks'].to_numpy()) # time window start
-    T =60
+    T =T_max - T_min+1
 
     patients=[]
     for id in ids:
@@ -25,8 +25,8 @@ if __name__ == '__main__':
 
     #params of ctmc
 
-    dt = 0.01# timestep for simulation
-    D = 5 # number of states of ctmc
+    dt = 0.001# timestep for simulation
+    D = 10 # number of states of ctmc
     alpha = 0.0001 #prior over num of transitions
     beta  = 0.01 # prior dwelling time
 
@@ -39,8 +39,8 @@ if __name__ == '__main__':
     p0 = np.zeros((1,D)).flatten()/D
     p0[D-1]=1
     #prior assumption on observation model
-    mu0 = np.arange(0,100,np.ceil(100/D))
-    sig= np.ones((D,1))*10
+    mu0 = np.arange(0,100,np.floor(100/D))
+    sig= np.ones((D))*10
     params = (mu0,sig)
 
     #init ctmc
@@ -49,7 +49,9 @@ if __name__ == '__main__':
     print(T_min)
     dat = []
     for j in range(0,len(patients)):
-        dat.append(patients[j].traj_p)
+        if patients[j].smoker.pop() == 'Ex-smoker':
+            if patients[j].sex.pop() == 'Female':
+                dat.append((patients[j].traj_p[0]-T_min+0.1,patients[j].traj_p[1]))
 
     M = 100  # number of EM iterations
     mc.reset_stats()
@@ -57,7 +59,7 @@ if __name__ == '__main__':
 
     for m in range(0, M):
         llh, sols = mc.process_emissions(dat)
-        #mc.update_obs_model(sols, dat)
+        mc.update_obs_model(sols, dat)
         mc.estimate_Q()
 
         # log-likelihood
@@ -75,9 +77,26 @@ if __name__ == '__main__':
         # mse of rate matrix estimate
         print("Q_estimate:\n %s" % a0)
 
-        x = sols[0][1]
-        y = sols[0][0]
-        y = np.multiply(y,mu0[:,None])
-        y = np.sum(y,axis=0)
-        plt.plot(x,y)
+        mc.T = 133
+        llh, sols = mc.process_emissions(dat)
+        plt.figure(1)
+        for k in range(0,10):
+
+            l = random.randint(0,len(dat)-1)
+
+            x = sols[l][1]+T_min-0.1
+            y = sols[l][0]
+            mu0 = mc.params[0]
+            y = np.multiply(y,mu0[:,None])*patients[l].base_fvc/100
+            y = np.sum(y,axis=0)
+
+            plt.plot(x,y)
+
+
+            x = dat[l][0]+T_min-0.1
+            y = dat[l][1]*patients[l].base_fvc/100
+            plt.plot(x, y,'r+')
+
+        plt.ylim((0, 6000))
         plt.show()
+        mc.T = T_max - T_min+1

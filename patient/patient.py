@@ -26,7 +26,7 @@ class patient():
         """
         times    = sub_df['Weeks'].to_numpy()
         obs      = sub_df['Percent'].to_numpy()
-        traj =  (times[:]-min(times[:])+0.1,obs[:])
+        traj =  (times[:],obs[:])
         self. traj_p = traj
         return None
 
@@ -39,9 +39,9 @@ class patient():
         sub_df = df[df['Patient'] == self.id]
 
         self.load_traj(sub_df)
-        self.age = set(sub_df['Age'])
-        self.sex = set(sub_df['Sex'])
-        self.smoker = set(sub_df['SmokingStatus'])
+        self.age = list(set(sub_df['Age']))
+        self.sex = list(set(sub_df['Sex']))
+        self.smoker = list(set(sub_df['SmokingStatus']))
         self.base_fvc = max(sub_df['FVC'])*100/max(sub_df['Percent'])
         return None
 
