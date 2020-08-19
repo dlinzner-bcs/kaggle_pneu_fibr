@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     #params of ctmc
 
-    dt = 0.005 # timestep for simulation
+    dt = 0.1# timestep for simulation
     D = 10 # number of states of ctmc
     alpha = 0.1 #prior over num of transitions
     beta  = 0.1 # prior dwelling time
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     p0 = np.ones((1,D)).flatten()/D
     #prior assumption on observation model
     mu = np.arange(0,100,D)
-    sig= np.ones((D))*0.2
+    sig= np.ones((D,1))*10
     params = (mu,sig)
 
     #init ctmc
@@ -63,7 +63,6 @@ if __name__ == '__main__':
         print("log-likelihood:\n %s" % llh)
         # current obs params estimate
         print("mu_estimate:\n %s" % mc.params[0])
-        print("mu_truth:\n %s" % np.array([0, 1]))
 
         mc.reset_stats()
 
@@ -74,4 +73,3 @@ if __name__ == '__main__':
         np.fill_diagonal(b, 0)
         # mse of rate matrix estimate
         print("Q_estimate:\n %s" % a0)
-        print("Q_truth:\n %s" % b)
