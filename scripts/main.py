@@ -26,7 +26,7 @@ if __name__ == '__main__':
     #params of ctmc
 
     dt = 0.005 # timestep for simulation
-    D = 100 # number of states of ctmc
+    D = 10 # number of states of ctmc
     alpha = 0.1 #prior over num of transitions
     beta  = 0.1 # prior dwelling time
 
@@ -38,21 +38,22 @@ if __name__ == '__main__':
     #generate random initial state
     p0 = np.ones((1,D)).flatten()/D
     #prior assumption on observation model
-    mu = np.arange(0,D)
-    sig= np.ones((D))*1
+    mu = np.arange(0,100,D)
+    sig= np.ones((D))*0.2
     params = (mu,sig)
 
     #init ctmc
     mc = ctmc(Q,p0,alpha,beta,T,dt,params)
 
+    print(T_min)
     dat = []
     for j in range(0,len(patients)):
-        dat.append((patients[j].traj_p[0]-T_min,patients[j].traj_p)[1])
+        dat.append(patients[j].traj_p)
 
     M = 100  # number of EM iterations
     mc.reset_stats()
     mc.estimate_Q()
-    print(2)
+
     for m in range(0, M):
         llh, sols = mc.process_emissions(dat)
         mc.update_obs_model(sols, dat)

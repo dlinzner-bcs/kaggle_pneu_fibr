@@ -21,7 +21,7 @@ class patient():
     def load_traj(self, subframe):
         times    = subframe['Weeks'].to_numpy()
         obs      = subframe['Percent'].to_numpy()
-        traj =  (times[:],obs[:])
+        traj =  (times[:]-min(times[:]),obs[:])
         self. traj_p = traj
         return None
 
