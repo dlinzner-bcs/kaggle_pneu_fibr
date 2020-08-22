@@ -26,7 +26,7 @@ if __name__ == '__main__':
     #params of ctmc
 
     dt = 0.001# timestep for simulation
-    D = 10 # number of states of ctmc
+    D = 5 # number of states of ctmc
     alpha = 0.0001 #prior over num of transitions
     beta  = 0.01 # prior dwelling time
 
